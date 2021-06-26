@@ -1,0 +1,11 @@
+Impossible de delete un User avec des Dessins - réglé le 24/06/2021
+
+24/06/2021 - L'API est bientot terminé, il faut faire la partie admin avec:
+    (pour se faire regarder le token et voir si le Admin est bien la est égale a true(ou 1))
+    lister tous les Users.
+    Pouvoir Supprimer un compte ou un dessin.
+
+
+Faire le systeme de like(pour cela je pense qu'il va avoir besoin d'une autre table) Aide : https://www.youtube.com/watch?v=SMA-JDHSLEw Fait le 26/06/2021
+Faire un Readme en .md (pour comprendre le markdon)
+voir pour sécurisé le stockage d'image sur nodeJS pour eviter que tlm ai acces (mais pas vraiment utile pck normalement toutes les images seront accessibles par tous le monde.)
