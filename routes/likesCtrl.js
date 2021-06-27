@@ -72,7 +72,6 @@ router.get('/:dessinId/vote/like',(req,res) => {
         function (dessinFound,userFound, done) {
             dessinFound.update({likes: dessinFound.likes + 1})
             .then(function (dessinFound) {
-                console.log('test');
                 done(dessinFound)
             })
             .catch((err)=>{
