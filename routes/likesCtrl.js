@@ -10,12 +10,12 @@ router.get('/:dessinId/vote/like',(req,res) => {
     //Getting auth header
     var headerAuth = req.headers['authorization'];
     var userId = jwtUtils.getUserId(headerAuth);
-    if (userId <0){ return res.status(400).json({'error':'wrong token'}); };
+    if (userId <0){ return res.json({'error':'wrong token'}); };
     
     //Params
     var dessinId = parseInt(req.params.dessinId);
     if (dessinId <=0) {
-        return res.status(400).json({ 'error': 'invalid parameters'});
+        return res.json({ 'error': 'invalid parameters'});
     }
     
     asyncLib.waterfall([
@@ -27,7 +27,7 @@ router.get('/:dessinId/vote/like',(req,res) => {
                 done(null,dessinFound);
             })
             .catch((err)=>{
-                return res.status(500).json({'error': 'unable to verify dessin'});})
+                return res.json({'error': 'unable to verify dessin'});})
         },
         function (dessinFound, done) {
             if (dessinFound) {
@@ -35,9 +35,9 @@ router.get('/:dessinId/vote/like',(req,res) => {
                     where: {id:userId}
                 })
                 .then(userFound=>{done(null, dessinFound, userFound);})
-                .catch(err=> {return res.status(500).json({'error':'unable to verify user'});});
+                .catch(err=> {return res.json({'error':'unable to verify user'});});
             } else{
-                res.status(404).json({'error': 'dessin not exist'});
+                res.json({'error': 'dessin not exist'});
             }
         },
         function (dessinFound, userFound, done) {
@@ -51,9 +51,9 @@ router.get('/:dessinId/vote/like',(req,res) => {
                 .then((isUserAlreadyLiked)=>{
                     done(null,dessinFound, userFound, isUserAlreadyLiked);
                 })
-                .catch((err)=>{return res.status(500).json({'error': 'unable to verify is user already liked'});})
+                .catch((err)=>{return res.json({'error': 'unable to verify is user already liked'});})
             }else{
-                res.status(404).json({'error':'user not exist'})
+                res.json({'error':'user not exist'})
             }
         },
         function (dessinFound, userFound, isUserAlreadyLiked, done) {
@@ -63,10 +63,10 @@ router.get('/:dessinId/vote/like',(req,res) => {
                     done(null,dessinFound, userFound)
                 })
                 .catch(function (err) {
-                    return res.status(500).json({'error': 'unable to set user reaction'});
+                    return res.json({'error': 'unable to set user reaction'});
                 });
             }else {
-                return res.status(409).json({'error':'message already liked'});
+                return res.json({'error':'message already liked'});
             }
         },
         function (dessinFound,userFound, done) {
@@ -76,14 +76,14 @@ router.get('/:dessinId/vote/like',(req,res) => {
             })
             .catch((err)=>{
                 console.log(err);
-                return res.status(500).json({'error': 'cannot update message like counter'});
+                return res.json({'error': 'cannot update message like counter'});
             });
         },
     ],function (likedDessin) {
         if(likedDessin){
             return res.status(201).json(likedDessin);
         } else {
-            return res.status(500).json({'error': 'cannot update message'});
+            return res.json({'error': 'cannot update message'});
         }
     });
 
@@ -95,12 +95,12 @@ router.get('/:dessinId/vote/dislike',(req,res) => {
     //Getting auth header
     var headerAuth = req.headers['authorization'];
     var userId = jwtUtils.getUserId(headerAuth);
-    if (userId <0){ return res.status(400).json({'error':'wrong token'}); };
+    if (userId <0){ return res.json({'error':'wrong token'}); };
     
     //Params
     var dessinId = parseInt(req.params.dessinId);
     if (dessinId <=0) {
-        return res.status(400).json({ 'error': 'invalid parameters'});
+        return res.json({ 'error': 'invalid parameters'});
     }
     
     asyncLib.waterfall([
@@ -111,7 +111,7 @@ router.get('/:dessinId/vote/dislike',(req,res) => {
             .then(function (dessinFound) {
                 done(null,dessinFound);
             })
-            .catch((err)=>{return res.status(500).json({'error': 'unable to verify dessin'});})
+            .catch((err)=>{return res.json({'error': 'unable to verify dessin'});})
         },
         function (dessinFound, done) {
             //verif if dessin existe
@@ -120,9 +120,9 @@ router.get('/:dessinId/vote/dislike',(req,res) => {
                     where: {id:userId}
                 })
                 .then(userFound=>{done(null, dessinFound, userFound);})
-                .catch(err=> {return res.status(500).json({'error':'unable to verify user'});});
+                .catch(err=> {return res.json({'error':'unable to verify user'});});
             } else{
-                res.status(404).json({'error': 'dessin not exist'});
+                res.json({'error': 'dessin not exist'});
             }
         },
         function (dessinFound, userFound, done) {
@@ -137,9 +137,9 @@ router.get('/:dessinId/vote/dislike',(req,res) => {
                 .then((isUserAlreadyLiked)=>{
                     done(null,dessinFound, userFound, isUserAlreadyLiked);
                 })
-                .catch((err)=>{return res.status(500).json({'error': 'unable to verify is user already liked'});})
+                .catch((err)=>{return res.json({'error': 'unable to verify is user already liked'});})
             }else{
-                res.status(404).json({'error':'user not exist'})
+                res.json({'error':'user not exist'})
             }
         },
         function (dessinFound, userFound, isUserAlreadyLiked, done) {
@@ -150,10 +150,10 @@ router.get('/:dessinId/vote/dislike',(req,res) => {
                     done(null,dessinFound, userFound)
                 })
                 .catch(function (err) {
-                    return res.status(500).json({'error': 'cannot remove alreate liked post'});
+                    return res.json({'error': 'cannot remove alreate liked post'});
                 });
             }else {
-                return res.status(409).json({'error':'message not liked'});
+                return res.json({'error':'message not liked'});
             }
         },
         function (dessinFound,userFound,done) {
@@ -162,14 +162,14 @@ router.get('/:dessinId/vote/dislike',(req,res) => {
             }).then(()=>{
                 done(dessinFound);
             }).catch((err)=>{
-                return res.status(500).json({'error': 'cannot update message like counter'});
+                return res.json({'error': 'cannot update message like counter'});
             })
         }
     ], function (likedDessin) {
         if(likedDessin){
             return res.status(201).json(likedDessin);
         } else {
-            return res.status(500).json({'error': 'cannot update message'});
+            return res.json({'error': 'cannot update message'});
         }
     });
 

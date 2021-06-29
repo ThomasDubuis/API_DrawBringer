@@ -15,7 +15,7 @@ router.get('/getUsers',(req,res) => {
     var offset = parseInt(req.query.offset);
     var order = req.query.order;
 
-    if (isAdmin == false){ return res.status(400).json({'error':'wrong token or no admin'}); };
+    if (isAdmin == false){ return res.json({'error':'wrong token or no admin'}); };
     
     db.User.findAll({
         order:[(order!=null)? order.split(':'): ['id','ASC']],
@@ -30,11 +30,11 @@ router.get('/getUsers',(req,res) => {
         if (user) {
             res.status(200).json(user);
         } else {
-            res.status(404).json({'error':'no user found'});
+            res.json({'error':'no user found'});
         }
     }).catch( function (err) {
         console.log(err);
-        res.status(500).json({'error':'invalid fields'});
+        res.json({'error':'invalid fields'});
     });
 });
 
@@ -44,10 +44,10 @@ router.delete('/deleteUser',(req, res) =>{
     var headerAuth = req.headers['authorization'];
     var isAdmin = jwtUtils.getIsAdmin(headerAuth);
     
-    if (isAdmin == false){ return res.status(400).json({'error':'wrong token or no admin'}); };
+    if (isAdmin == false){ return res.json({'error':'wrong token or no admin'}); };
     
     var userId = req.body.userId;
-    if (userId < 0){ return res.status(400).json({'error':'Invalid params (userId)'}); };
+    if (userId < 0){ return res.json({'error':'Invalid params (userId)'}); };
 
     db.User.findOne({
        attributes: ['id','email','first_name','last_name','bio'],
@@ -61,9 +61,9 @@ router.delete('/deleteUser',(req, res) =>{
                }
            }).then(()=> res.send("success"));
        } else {
-           res.status(404).json({ 'error':'user not found'});
+           res.json({ 'error':'user not found'});
        }
-   }).catch(err => res.status(500).json({'error':'unable to verify user'}));
+   }).catch(err => res.json({'error':'unable to verify user'}));
 });
 
 //delete Dessin
@@ -72,10 +72,10 @@ router.delete('/deleteDessin',(req, res) =>{
     var headerAuth = req.headers['authorization'];
     var isAdmin = jwtUtils.getIsAdmin(headerAuth);
     
-    if (isAdmin == false){ return res.status(400).json({'error':'wrong token or no admin'}); };
+    if (isAdmin == false){ return res.json({'error':'wrong token or no admin'}); };
     
     var dessinId = req.body.dessinId;
-    if (dessinId < 0){ return res.status(400).json({'error':'Invalid params (dessinId)'}); };
+    if (dessinId < 0){ return res.json({'error':'Invalid params (dessinId)'}); };
 
     db.Dessin.findOne({
        attributes: ['id','UserId','title','description'],
@@ -88,9 +88,9 @@ router.delete('/deleteDessin',(req, res) =>{
                }
            }).then(()=> res.send("success"));
        } else {
-           res.status(404).json({ 'error':'dessin not found'});
+           res.json({ 'error':'dessin not found'});
        }
-   }).catch(err => res.status(500).json({'error':'unable to verify dessin'}));
+   }).catch(err => res.json({'error':'unable to verify dessin'}));
 });
 
 

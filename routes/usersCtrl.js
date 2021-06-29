@@ -16,14 +16,14 @@ router.post('/register',(req,res) => {
     var email = req.body.email;
     var password = req.body.password;
     var bio = req.body.bio;
-    if(first_name == null || last_name == null || email== null || password == null){
-        return res.status(400).json({'error':'missing parameters'})
+    if(first_name == null || last_name == null || email== null || password == null || first_name == "" || last_name == "" || email== "" || password == ""){
+        return res.json({'error':'missing parameters'})
     }
-    if(first_name.length >= 20 || first_name.length <=1){ return res.status(400).json({'error':'wrong firstname (must be length 2 - 20)'}) };
-    if(last_name.length >= 20 || last_name.length <=1){ return res.status(400).json({'error':'wrong last_name (must be length 2 - 20)'}) };
+    if(first_name.length >= 20 || first_name.length <=1){ return res.json({'error':'wrong firstname (must be length 2 - 20)'}) };
+    if(last_name.length >= 20 || last_name.length <=1){ return res.json({'error':'wrong last_name (must be length 2 - 20)'}) };
     
-    if (!EMAIL_REGEX.test(email)){ return res.status(400).json({'error':'email is not valid'}) };
-    if(!PASSWORD_REGEX.test(password)){ return res.status(400).json({'error':'password invalid (must lenght 4 - 8 and include 1 number at least)'}) };
+    if (!EMAIL_REGEX.test(email)){ return res.json({'error':'email is not valid'}) };
+    if(!PASSWORD_REGEX.test(password)){ return res.json({'error':'password invalid (must lenght 4 - 8 and include 1 number at least)'}) };
     //User already exist?
     db.User.findOne({
         attributes:['email'],
@@ -43,14 +43,14 @@ router.post('/register',(req,res) => {
                 .then( newUser => res.status(201).json({
                     'userId': newUser.id
                 }))
-                .catch( err => res.status(500).json({'error':'cannot add user'}));
+                .catch( err => res.json({'error':'cannot add user'}));
             })
         }else {
-            return res.status(409).json({'error':'user already exist'})
+            return res.json({'error':'user already exist'})
         }
     })
     .catch(function(err) {
-        res.status(500).json({'error': 'unable to verify user'});
+        res.json({'error': 'unable to verify user'});
     })
 });
 
@@ -58,8 +58,8 @@ router.post('/register',(req,res) => {
 router.post('/login',(req,res) => {
     var email = req.body.email;
     var password = req.body.password;
-    if(email == null || password == null){
-        return res.status(400).json({'error':'missing parameters'})
+    if(email == null || password == null || email == "" ||password == ""){
+        return res.status(200).json({'error':'missing parameters'})
     }
     db.User.findOne({
         where:{email:email}
@@ -73,15 +73,15 @@ router.post('/login',(req,res) => {
                         'token': jwtUtils.generateTokenForUser(userFound)
                     })
                 }else {
-                    return res.status(403).json({'error':'invalid password'});
+                    return res.json({'error':'invalid password'});
                 }
             });
         }else{
-            return res.status(400).json({'error':'user not exist in DB'});
+            return res.json({'error':'user not exist in DB'});
         }
     })
     .catch(function(err) {
-        res.status(500).json({'error': 'unable to verify user'});
+        res.json({'error': 'unable to verify user'});
     })
 });
 
@@ -91,7 +91,7 @@ router.get('/me',(req,res) => {
     var headerAuth = req.headers['authorization'];
     var userId = jwtUtils.getUserId(headerAuth);
     
-    if (userId <0){ return res.status(400).json({'error':'wrong token'}); };
+    if (userId <0){ return res.json({'error':'wrong token'}); };
     
     db.User.findOne({
         attributes: ['id','email','first_name','last_name','bio'],
@@ -101,9 +101,9 @@ router.get('/me',(req,res) => {
         if (user) {
             res.status(201).json(user);
         } else {
-            res.status(404).json({ 'error':'user not found'});
+            res.json({ 'error':'user not found'});
         }
-    }).catch(err => res.status(500).json({'error': 'cannot fetch user'}));
+    }).catch(err => res.json({'error': 'cannot fetch user'}));
 });
 
 //delete User
@@ -112,7 +112,7 @@ router.delete('/me',(req, res) =>{
      var headerAuth = req.headers['authorization'];
      var userId = jwtUtils.getUserId(headerAuth);
      
-     if (userId <0){ return res.status(400).json({'error':'wrong token'}); };
+     if (userId <0){ return res.json({'error':'wrong token'}); };
      
      db.User.findOne({
         attributes: ['id','email','first_name','last_name','bio'],
@@ -126,9 +126,9 @@ router.delete('/me',(req, res) =>{
                 }
             }).then(()=> res.send("success"));
         } else {
-            res.status(404).json({ 'error':'user not found'});
+            res.json({ 'error':'user not found'});
         }
-    }).catch(err => res.status(500).json({'error':'unable to verify user'}));
+    }).catch(err => res.json({'error':'unable to verify user'}));
 
 });
 
@@ -138,7 +138,7 @@ router.put('/me',(req,res) => {
     var headerAuth = req.headers['authorization'];
     var userId = jwtUtils.getUserId(headerAuth);
     
-    if (userId <0){ return res.status(400).json({'error':'wrong token'}); };
+    if (userId <0){ return res.json({'error':'wrong token'}); };
     //Params
     var bio = req.body.bio;
     var first_name= req.body.first_name;
@@ -152,7 +152,7 @@ router.put('/me',(req,res) => {
             }).then(function(userFound) {
                 done(null, userFound);
             }).catch(function(err) {
-                return res.status(500).json({'error': 'unable to verify user'});
+                return res.json({'error': 'unable to verify user'});
             });
         },
         function(userFound, done) {
@@ -164,10 +164,10 @@ router.put('/me',(req,res) => {
                 }).then(function() {
                     done(userFound)
                 }).catch( function(err) {
-                    res.status(500).json({'error':'cannot update user'});
+                    res.json({'error':'cannot update user'});
                 });
             } else {
-                res.status(404).json({'error':'user not found'});
+                res.json({'error':'user not found'});
             }
         },
     ],function(userFound) {
@@ -179,7 +179,7 @@ router.put('/me',(req,res) => {
                  'bio': userFound.bio
                 });
         }else {
-            return res.status(500).json({'error':'cannot update user profile'});
+            return res.json({'error':'cannot update user profile'});
         }
     })
     

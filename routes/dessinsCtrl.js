@@ -23,7 +23,7 @@ router.post('/createDessin',(req, res) =>{
                 done(null,userFound)
             })
             .catch( function (err) {
-                return res.status(500).json({'error':'unable to verify user'});
+                return res.json({'error':'unable to verify user'});
             });
         },
         function (userFound, done) {
@@ -38,14 +38,14 @@ router.post('/createDessin',(req, res) =>{
                     done(newDessin);
                 })
             }else{
-                res.status(404).json({'error':'user not found'});
+                res.json({'error':'user not found'});
             }
         },
     ], function (newDessin) {
         if (newDessin) {
             return res.status(201).json(newDessin);
         }else {
-            return res.status(500).json({'error':'cannot create dessin'});
+            return res.json({'error':'cannot create dessin'});
         }
     });
 });
@@ -70,11 +70,11 @@ router.get('/getDessins',(req,res)=>{
         if (dessins) {
             res.status(200).json(dessins);
         } else {
-            res.status(404).json({'error':'no dessins found'});
+            res.json({'error':'no dessins found'});
         }
     }).catch( function (err) {
         console.log(err);
-        res.status(500).json({'error':'invalid fields'});
+        res.json({'error':'invalid fields'});
     });
 });
 module.exports = router;

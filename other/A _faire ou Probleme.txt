@@ -1,4 +1,5 @@
 A FAIRE
+Modifier les erreurs pour les mettre en francais.
 Faire un Readme en .md (pour comprendre le markdon)
 voir pour sécurisé le stockage d'image sur nodeJS pour eviter que tlm ai acces (mais pas vraiment utile pck normalement toutes les images seront accessibles par tous le monde.)
 
